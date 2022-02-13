@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  sample_prod:
+    build: 
+      context: ./
+      dockerfile: Dockerfile.prod
+    env_file:
+      - ./backend/.env.production
+    image: sample_prod:latest
+    container_name: sample_prod
+    restart: always

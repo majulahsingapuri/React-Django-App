@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  sample_db_dev:
+    image: postgres:latest
+    env_file:
+      - ./.env.db
+    container_name: sample_db_dev
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - sample_db:/var/lib/postgresql/data
+    networks:
+      - network
+
+  sample_dev:
+    build: 
+      context: ./
+      dockerfile: Dockerfile.dev
+    env_file:
+      - ./backend/.env.development
+    image: sample_dev:latest
+    container_name: sample_dev
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - network
+    depends_on:
+      - sample_db_dev
+    
+networks:
+  network:
+
+volumes:
+  sample_db:

@@ -1,0 +1,12 @@
+.pytest_cache
+.venv
+.coverage
+.env
+.env.template
+poetry.lock
+poetry.toml
+pyproject.toml
+pytest.ini
+README.md
+build/
+node_modules/

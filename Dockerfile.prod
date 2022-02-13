@@ -1,0 +1,45 @@
+# Base image
+FROM python:3.9-slim-buster
+
+# Making sure the output gets sent to terminal
+ENV PYTHONUNBUFFERED=1
+
+# Node
+RUN apt -y update
+RUN apt -y upgrade
+RUN apt -y install curl
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get install nodejs
+RUN node -v
+RUN npm -v
+
+# Set Working Directory
+WORKDIR /frontend
+
+# Add `/frontend/node_modules/.bin` to $PATH
+ENV PATH /frontend/node_modules/.bin:$PATH
+
+# Copy everything
+COPY ./sample-frontend .
+
+# Build application
+RUN npm i -g yarn
+RUN npm i dotenv-cli --save-dev
+RUN yarn install
+RUN yarn build:prod
+
+# Set Working Directory
+WORKDIR /backend
+
+# Copy everything
+COPY ./sample-backend .
+RUN cp .env.production .env
+
+# Install dependencies
+RUN pip3 --no-cache-dir install -r requirements.txt
+
+# Copy to Backend Static Files
+RUN cp -a /frontend/build/. /backend/build
+
+# Launch application
+CMD [ "gunicorn", "sample.wsgi" ]
